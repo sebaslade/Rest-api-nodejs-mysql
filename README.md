@@ -1,1 +1,4 @@
-API Rest en Node con MySql
+API Rest en Node:
+-Arquitectura MVC
+-Inyeccion de dependencias
+-Conexión a una base de datos MySql y Local
