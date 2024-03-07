@@ -120,10 +120,76 @@ export class MovieModel {
 
     static async delete({ id }) {
         // PENDIENTE: ELIMINAR PELÍCULA
+        try {
+            // Ejecutar la consulta para eliminar la película con el ID proporcionado
+            await connection.query(
+                `DELETE FROM movie
+                 WHERE id = UNHEX(REPLACE((?), '-', ''));`,
+                [id]
+            );
+    
+            // Si la eliminación se realizó correctamente, devolver un mensaje de éxito
+            return { message: 'Película eliminada exitosamente' };
+        } catch (error) {
+            // Manejar errores
+            console.error('Error al eliminar la película', error);
+            throw new Error('Error al eliminar la película');
+        }
     }
 
     static async update({ id, input }) {
         // PENDIENTE: ACTUALIZAR PELÍCULA
+        const {
+            title,
+            year,
+            duration,
+            director,
+            rate,
+            poster
+        } = input
+    
+        try {
+            // Construir la consulta SQL para actualizar la película con el ID proporcionado
+            let sql = `UPDATE movie SET `
+            const values = []
+            if (title !== undefined) {
+                sql += `title = ?, `
+                values.push(title)
+            }
+            if (year !== undefined) {
+                sql += `year = ?, `
+                values.push(year)
+            }
+            if (duration !== undefined) {
+                sql += `duration = ?, `
+                values.push(duration)
+            }
+            if (director !== undefined) {
+                sql += `director = ?, `
+                values.push(director)
+            }
+            if (rate !== undefined) {
+                sql += `rate = ?, `
+                values.push(rate)
+            }
+            if (poster !== undefined) {
+                sql += `poster = ?, `
+                values.push(poster)
+            }
+    
+            // Eliminar la coma final y agregar la cláusula WHERE
+            sql = sql.slice(0, -2) + ` WHERE id = UNHEX(REPLACE((?), '-', ''));`
+    
+            // Ejecutar la consulta SQL
+            await connection.query(sql, [...values, id])
+    
+            // Si la actualización se realiza correctamente, devolver un mensaje de éxito
+            return { message: 'Película actualizada exitosamente' }
+        } catch (error) {
+            // Manejar errores
+            console.error('Error al actualizar la película', error)
+            throw new Error('Error al actualizar la película')
+        }
     }
 }
 
